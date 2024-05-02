@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Threading.Tasks;
 using LLMUnity;
 
@@ -9,6 +10,8 @@ public class puppyChat : MonoBehaviour
 
     public LLMClient llm;
     public string mood = "happy";
+
+    public Text chatbotText;
 
     // Start is called before the first frame update
     void Start()
@@ -28,5 +31,10 @@ public class puppyChat : MonoBehaviour
     void DebugText(string msg)
     {
         Debug.Log("puppy chatbot: " + msg);
+        chatbotText.text = msg;
+    }
+
+    public void SwitchMood(string changedMood){
+        mood = changedMood;
     }
 }
