@@ -24,14 +24,16 @@ public class puppyChat : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            chatbotText.text = "Thinking...";
             Task chatTask = llm.Chat("the " + mood + " puppy says something about being " + mood, DebugText);
         }
     }
 
     void DebugText(string msg)
     {
+        string[] thoughts = msg.Split('<');
         Debug.Log("puppy chatbot: " + msg);
-        chatbotText.text = msg;
+        chatbotText.text = thoughts[0];
     }
 
     public void SwitchMood(string changedMood){
