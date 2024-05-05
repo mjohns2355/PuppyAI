@@ -6,7 +6,8 @@ using TMPro;
 
 public class Puppy : MonoBehaviour
 {
-
+    public string mood = "happy";
+    public string goal = "ball";
     public Transform[] goals;
     private NavMeshAgent myAgent;
     private int currentGoal = 0;
@@ -18,10 +19,12 @@ public class Puppy : MonoBehaviour
     private Transform priority;
     private TreatSpawner ts;
     private Transform prevPriority;
+    public Color moodColor;
 
     // Start is called before the first frame update
     void Start()
     {
+        moodColor = Color.yellow;
         myAgent = GetComponent<NavMeshAgent>();
         myAnim = GetComponent<Animator>();
         myAgent.speed = Random.Range(1.5f, 3f);
@@ -62,8 +65,9 @@ public class Puppy : MonoBehaviour
                 priority = goals[currentGoal];
             }
             happiness--;
+            UpdateMood();
             score.text = happiness.ToString();
-            Debug.Log("Happiness down: " + happiness);
+          //  Debug.Log("Happiness down: " + happiness);
             myAgent.speed = Random.Range(1.5f, 3f);
             myAnim.speed = myAgent.speed;
         }
@@ -76,9 +80,10 @@ public class Puppy : MonoBehaviour
                 priority = goals[currentGoal];
             }
             happiness++;
+            UpdateMood();
             score.text = happiness.ToString();
-            Debug.Log("Happiness up: " + happiness);
-            timer = Random.Range(3, 5);
+          //  Debug.Log("Happiness up: " + happiness);
+            timer = Random.Range(2, 4);
             currentGoal = Random.Range(0, goals.Length);
             priority = goals[currentGoal];
             myAgent.speed = Random.Range(1.5f, 3f);
@@ -86,6 +91,36 @@ public class Puppy : MonoBehaviour
         }
 
         myAgent.destination = priority.position;
+        goal = priority.tag;
+    }
+
+    void UpdateMood()
+    {
+        if (happiness > 20)
+        {
+            mood = "delighted";
+            moodColor = Color.blue;
+        }
+        else if (happiness > 15)
+        {
+            mood = "joyous";
+            moodColor = Color.cyan;
+        }
+        else if (happiness > 8)
+        {
+            mood = "happy";
+            moodColor = Color.green;
+        }
+        else if (happiness > 4)
+        {
+            mood = "content";
+            moodColor = Color.yellow;
+        }
+        else
+        {
+            mood = "sad";
+            moodColor = Color.red;
+        }
     }
 
     public void AlertTreat(Transform t)

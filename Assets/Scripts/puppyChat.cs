@@ -10,33 +10,137 @@ public class puppyChat : MonoBehaviour
 
     public LLMClient llm;
     public string mood = "happy";
+    public string goal = "ball";
+    public string recentGoal = "";
 
     public Text chatbotText;
+    public bool isReady = false;
 
-    // Start is called before the first frame update
-    void Start()
+    private float timer = 2;
+
+    public GameObject[] puppies;
+    private int currentPuppy = 0;
+
+    public bubble thoughtBubble;
+    Vector3 pos;
+    RectTransform rt;
+    public Slider thoughtFill;
+    public Image thoughtColor;
+    private string haiku = "";
+    private float temp;
+
+    private void Start()
     {
-        
+        rt = thoughtBubble.GetComponent<RectTransform>();
+        Task chatTask = llm.Chat("you are a good puppy thinking about belly rubs and looking for treats and toys");
+    }
+    public void Ready()
+    {
+        isReady = true;
+        timer = 2;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if(timer > 0)
         {
-            chatbotText.text = "Thinking...";
-            Task chatTask = llm.Chat("the " + mood + " puppy says something about being " + mood, DebugText);
+            timer -= Time.deltaTime;
+            if(timer < 4)
+            {
+                thoughtBubble.gameObject.SetActive(false);
+            }
         }
+        else if (isReady)
+        {
+            isReady = false;
+            chatbotText.text = "thinking...";
+            if (!puppies[currentPuppy].activeInHierarchy)
+            {
+                currentPuppy = 0;
+            }
+            thoughtBubble.pup = puppies[currentPuppy].transform;
+            pos = Camera.main.WorldToScreenPoint(puppies[currentPuppy].transform.position);
+            pos.y += 80;
+            rt.position = pos;
+            thoughtBubble.gameObject.SetActive(true);
+            mood = puppies[currentPuppy].GetComponent<Puppy>().mood;
+            goal = puppies[currentPuppy].GetComponent<Puppy>().goal;
+            thoughtColor.color = puppies[currentPuppy].GetComponent<Puppy>().moodColor;
+            thoughtFill.value = 0;
+            thoughtFill.gameObject.SetActive(true);
+            Debug.Log("mood: " + mood + " goal: " + goal);
+            
+            Task chatTask = llm.Chat("you are a " + mood + " puppy thinking about being " + mood + " and looking for a " + goal + " that you want. "+haiku+" end with a heart icon", DebugText);
+            currentPuppy++;
+            temp = Random.Range(0, 5);
+            if (temp < 1)
+            {
+                haiku = " at least 7 words. ";
+            }
+            else if (temp < 3)
+            {
+                haiku = " you love your hooman. ";
+            }
+            else if(temp < 4)
+            {
+                haiku = " you are a good pup. ";
+            } else
+            {
+                haiku = "";
+            }
+        } 
+        if(chatbotText.text == "thinking..." && thoughtFill.value < 1)
+        {
+            thoughtFill.value += Time.deltaTime * (1 - thoughtFill.value) / 2f;
+        } 
     }
 
     void DebugText(string msg)
     {
-        string[] thoughts = msg.Split('<');
-        Debug.Log("puppy chatbot: " + msg);
-        chatbotText.text = thoughts[0];
+        thoughtFill.gameObject.SetActive(false);
+        if (msg.Contains('('))
+        {
+            if (timer < 0 && !isReady)
+            {
+                timer = 7;
+                isReady = true;
+            }
+            string[] thoughts = msg.Split('(');
+            chatbotText.text = thoughts[0];
+        } else if (msg.Contains('<'))
+        {
+            if (timer < 0 && !isReady)
+            {
+                timer = 7;
+                isReady = true;
+            }
+            string[] thoughts = msg.Split('<');
+            chatbotText.text = thoughts[0];
+        }
+        else if (msg.Contains("Or"))
+        {
+            if (timer < 0 && !isReady)
+            {
+                timer = 7;
+                isReady = true;
+            }
+            string[] thoughts = msg.Split('O');
+            chatbotText.text = thoughts[0];
+        }
+        else
+        {
+            chatbotText.text = msg;
+            if(msg.Length > 18 && timer <= 0 && !isReady)
+            {
+                timer = 7;
+                isReady = true;
+            }
+        }
     }
 
     public void SwitchMood(string changedMood){
         mood = changedMood;
+        isReady = true;
     }
 }
