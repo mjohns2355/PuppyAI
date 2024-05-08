@@ -76,7 +76,7 @@ public class puppyChat : MonoBehaviour
             temp = Random.Range(0, 5);
             if (temp < 1)
             {
-                haiku = " at least 7 words. ";
+                haiku = " at least 6 words. ";
             }
             else if (temp < 3)
             {
@@ -87,7 +87,7 @@ public class puppyChat : MonoBehaviour
                 haiku = " you are a good pup. ";
             } else
             {
-                haiku = "";
+                haiku = " at least 4 words. ";
             }
         } 
         if(chatbotText.text == "thinking..." && thoughtFill.value < 1)
