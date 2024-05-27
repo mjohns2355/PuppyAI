@@ -31,8 +31,10 @@ public class puppyChat : MonoBehaviour
 
     private void Start()
     {
+        thoughtBubble.gameObject.SetActive(false);
         rt = thoughtBubble.GetComponent<RectTransform>();
         Task chatTask = llm.Chat("you are a good puppy thinking about belly rubs and looking for treats and toys");
+
     }
     public void Ready()
     {
@@ -43,10 +45,20 @@ public class puppyChat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(timer > 0)
+        if (chatbotText.text == "thinking...")
+        {
+
+            thoughtBubble.gameObject.SetActive(false);
+
+        } else if (timer > 4)
+        {
+            thoughtBubble.gameObject.SetActive(true);
+        }
+
+        if (timer > 0)
         {
             timer -= Time.deltaTime;
-            if(timer < 4)
+            if(timer < 3)
             {
                 thoughtBubble.gameObject.SetActive(false);
             }
@@ -63,7 +75,6 @@ public class puppyChat : MonoBehaviour
             pos = Camera.main.WorldToScreenPoint(puppies[currentPuppy].transform.position);
             pos.y += 80;
             rt.position = pos;
-            thoughtBubble.gameObject.SetActive(true);
             mood = puppies[currentPuppy].GetComponent<Puppy>().mood;
             goal = puppies[currentPuppy].GetComponent<Puppy>().goal;
             thoughtColor.color = puppies[currentPuppy].GetComponent<Puppy>().moodColor;
@@ -93,7 +104,8 @@ public class puppyChat : MonoBehaviour
         if(chatbotText.text == "thinking..." && thoughtFill.value < 1)
         {
             thoughtFill.value += Time.deltaTime * (1 - thoughtFill.value) / 2f;
-        } 
+        }
+
     }
 
     void DebugText(string msg)
@@ -103,7 +115,7 @@ public class puppyChat : MonoBehaviour
         {
             if (timer < 0 && !isReady)
             {
-                timer = 7;
+                timer = 9;
                 isReady = true;
             }
             string[] thoughts = msg.Split('(');
@@ -112,7 +124,7 @@ public class puppyChat : MonoBehaviour
         {
             if (timer < 0 && !isReady)
             {
-                timer = 7;
+                timer = 9;
                 isReady = true;
             }
             string[] thoughts = msg.Split('<');
@@ -122,7 +134,7 @@ public class puppyChat : MonoBehaviour
         {
             if (timer < 0 && !isReady)
             {
-                timer = 7;
+                timer = 9;
                 isReady = true;
             }
             string[] thoughts = msg.Split('O');
@@ -133,7 +145,7 @@ public class puppyChat : MonoBehaviour
             chatbotText.text = msg;
             if(msg.Length > 18 && timer <= 0 && !isReady)
             {
-                timer = 7;
+                timer = 9;
                 isReady = true;
             }
         }
