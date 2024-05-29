@@ -24,7 +24,7 @@ public class TreatSpawner : MonoBehaviour
 
     public void StartOver()
     {
-        SceneManager.LoadScene(0);
+        Application.Quit();
     }
 
     private void OnMouseDown()
