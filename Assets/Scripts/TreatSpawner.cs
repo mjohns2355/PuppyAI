@@ -24,6 +24,10 @@ public class TreatSpawner : MonoBehaviour
 
     public void StartOver()
     {
+        SceneManager.LoadScene(0);
+    }
+    public void EndGame()
+    {
         Application.Quit();
     }
 

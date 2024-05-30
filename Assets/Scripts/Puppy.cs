@@ -20,6 +20,7 @@ public class Puppy : MonoBehaviour
     private TreatSpawner ts;
     private Transform prevPriority;
     public Color moodColor;
+    public puppyChat pupLLM;
 
     // Start is called before the first frame update
     void Start()
@@ -37,61 +38,69 @@ public class Puppy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (priority == null || !priority.gameObject.activeInHierarchy)
+        if (!pupLLM.paused)
         {
-            priority = goals[currentGoal];
-        }
-        timer -= Time.deltaTime;
-        if(timer <= 0)
-        {
-            prevPriority = priority;
-            priority = null;
-            foreach (Transform t in priorityGoals)
-            {
-                if (t.gameObject.activeInHierarchy)
-                {
-                    if(t != prevPriority)
-                        priority = t;
-                }
-            }        
-            if (priority == null)
-            {
-                priority = goals[currentGoal];
-            }
-            timer = Random.Range(4, 8);
-            currentGoal = Random.Range(0, goals.Length);
-            if (priority == null)
-            {
-                priority = goals[currentGoal];
-            }
-            happiness--;
-            UpdateMood();
-            score.text = happiness.ToString();
-          //  Debug.Log("Happiness down: " + happiness);
-            myAgent.speed = Random.Range(1.5f, 3f);
-            myAnim.speed = myAgent.speed;
-        }
-        if(Vector3.Distance(transform.position, priority.position) < 0.55f)
-        {
-            if(priority.tag == "treat")
-            {
-               // ts.TreatGone(priority);
-                priority.gameObject.SetActive(false);
-                priority = goals[currentGoal];
-            }
-            happiness++;
-            UpdateMood();
-            score.text = happiness.ToString();
-          //  Debug.Log("Happiness up: " + happiness);
-            timer = Random.Range(2, 4);
-            currentGoal = Random.Range(0, goals.Length);
-            priority = goals[currentGoal];
-            myAgent.speed = Random.Range(1.5f, 3f);
-            myAnim.speed = myAgent.speed;
-        }
 
-        myAgent.destination = priority.position;
-        goal = priority.tag;
+            if (priority == null || !priority.gameObject.activeInHierarchy)
+            {
+                priority = goals[currentGoal];
+            }
+            timer -= Time.deltaTime;
+            if (timer <= 0)
+            {
+                prevPriority = priority;
+                priority = null;
+                foreach (Transform t in priorityGoals)
+                {
+                    if (t.gameObject.activeInHierarchy)
+                    {
+                        if (t != prevPriority)
+                            priority = t;
+                    }
+                }
+                if (priority == null)
+                {
+                    priority = goals[currentGoal];
+                }
+                timer = Random.Range(4, 8);
+                currentGoal = Random.Range(0, goals.Length);
+                if (priority == null)
+                {
+                    priority = goals[currentGoal];
+                }
+                happiness--;
+                UpdateMood();
+                score.text = happiness.ToString();
+                //  Debug.Log("Happiness down: " + happiness);
+                myAgent.speed = Random.Range(1.5f, 3f);
+                myAnim.speed = myAgent.speed;
+            }
+            if (Vector3.Distance(transform.position, priority.position) < 0.55f)
+            {
+                if (priority.tag == "treat")
+                {
+                    // ts.TreatGone(priority);
+                    priority.gameObject.SetActive(false);
+                    priority = goals[currentGoal];
+                }
+                happiness++;
+                UpdateMood();
+                score.text = happiness.ToString();
+                //  Debug.Log("Happiness up: " + happiness);
+                timer = Random.Range(2, 4);
+                currentGoal = Random.Range(0, goals.Length);
+                priority = goals[currentGoal];
+                myAgent.speed = Random.Range(1.5f, 3f);
+                myAnim.speed = myAgent.speed;
+            }
+
+            myAgent.destination = priority.position;
+            goal = priority.tag;
+        }
+        else
+        {
+            myAnim.speed = 0;
+        }
     }
 
     void UpdateMood()
@@ -113,12 +122,21 @@ public class Puppy : MonoBehaviour
         }
         else if (happiness > 4)
         {
-            mood = "content";
+            mood = "fine";
             moodColor = Color.yellow;
+        }
+        else if (happiness > 1)
+        {
+            mood = "sad";
+            moodColor = Color.red;
+        } else if(happiness > -1)
+        {
+            mood = "crying";
+            moodColor = Color.red;
         }
         else
         {
-            mood = "sad";
+            mood = "broken hearted";
             moodColor = Color.red;
         }
     }

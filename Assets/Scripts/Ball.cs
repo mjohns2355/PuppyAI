@@ -10,6 +10,8 @@ public class Ball : MonoBehaviour
     private Color startColor;
     private Vector3 tempForce;
 
+    public puppyChat pupLLM;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,25 +23,36 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.y > 2)
+        if (!pupLLM.paused)
         {
-            Vector3 temp = transform.position;
-            temp.y = 2;
-            transform.position = temp;
-            myRB.AddForce((Vector3.down));
+
+
+            if (transform.position.y > 2)
+            {
+                Vector3 temp = transform.position;
+                temp.y = 2;
+                transform.position = temp;
+                myRB.AddForce((Vector3.down));
+            }
         }
     }
 
     private void OnMouseDown()
     {
-        tempForce.x = Random.Range(-1, 1);
-        tempForce.z = Random.Range(-1, 1);
-        myRB.AddForce((Vector3.up + tempForce) * 250);
+        if (!pupLLM.paused)
+        {
+            tempForce.x = Random.Range(-1, 1);
+            tempForce.z = Random.Range(-1, 1);
+            myRB.AddForce((Vector3.up + tempForce) * 250);
+        }
     }
 
     private void OnMouseOver()
     {
-        myMat.color = startColor * 2;
+        if (!pupLLM.paused)
+        {
+            myMat.color = startColor * 2;
+        }
     }
 
     private void OnMouseExit()
