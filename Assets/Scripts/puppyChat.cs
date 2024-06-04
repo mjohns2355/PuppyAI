@@ -48,6 +48,8 @@ public class puppyChat : MonoBehaviour
     private int accurate;
     private int correctCount;
     public TextMeshProUGUI accuracy;
+    public TextMeshProUGUI thoughts;
+    public bool thoughtDone = true;
 
     private void Start()
     {
@@ -60,6 +62,7 @@ public class puppyChat : MonoBehaviour
     {
         isReady = true;
         timer = 2;
+        thoughtDone = false;
     }
 
     public void UnPause()
@@ -70,7 +73,7 @@ public class puppyChat : MonoBehaviour
                 moodSelects[moodCounter] = "broken hearted";
                 break;
             case 1:
-                moodSelects[moodCounter] = "crying";
+                moodSelects[moodCounter] = "wimpering";
                 break;
             case 2:
                 moodSelects[moodCounter] = "sad";
@@ -90,6 +93,8 @@ public class puppyChat : MonoBehaviour
             default:
                 break;
         }
+        thoughts.text += ("  Choice: " + moodSelects[moodCounter]);
+        thoughtDone = false;
         moodCounter++;
         if (moodCounter >= 6)
         {
@@ -105,6 +110,7 @@ public class puppyChat : MonoBehaviour
             accurate = (int)(100*(correctCount / 6f));
             accuracy.text = "Accuracy: " + accurate + "%";
             summaryScreen.SetActive(true);
+            thoughts.gameObject.SetActive(false);
         } else
         {
 
@@ -129,6 +135,11 @@ public class puppyChat : MonoBehaviour
             else if (timer > 4)
             {
                 thoughtBubble.gameObject.SetActive(true);
+                if (!thoughtDone)
+                {
+                    thoughts.text += ('\n'+chatbotText.text);
+                    thoughtDone = true;
+                }
             }
 
             if (timer > 0)

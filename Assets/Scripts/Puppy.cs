@@ -131,7 +131,7 @@ public class Puppy : MonoBehaviour
             moodColor = Color.red;
         } else if(happiness > -1)
         {
-            mood = "crying";
+            mood = "wimpering";
             moodColor = Color.red;
         }
         else
