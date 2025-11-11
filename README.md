@@ -1,0 +1,1 @@
+This project integrates an LLM with the Unty game enginge to generate real-time conversational though bubbles for virtual puppies. Play the game and read about the research here: https://astire-games.itch.io/puppyai
